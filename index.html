@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ευλογείτε | سبحوه</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- بطاقة الترحيب -->
+    <div id="welcomeModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-icon">🕊️</div>
+            <h2>سلام ونعمة 🤍</h2>
+            <p>أهلاً بيك في مكتبة الترانيم والألحان. خلوة مباركة لقلبك.</p>
+            <button id="closeModalBtn">دخول المكتبة</button>
+        </div>
+    </div>
+
+    <!-- الهيدر والبحث -->
+    <header class="main-header">
+        <div class="logo-area">
+            <h1><i class="fa-solid fa-church"></i>Ευλογείτε | سبحوه</h1>
+            <p>مكتبتك الروحية الهادئة</p>
+        </div>
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchBox" placeholder="ابحث عن ترنيمة أو لحن...">
+        </div>
+    </header>
+
+    <!-- شريط الـ Playlists -->
+    <nav class="playlists-nav" id="playlistsNav">
+        <button class="playlist-btn active" data-playlist="all">الكل</button>
+        <button class="playlist-btn" data-playlist="favorites"><i class="fa-solid fa-heart" style="color: #e74c3c;"></i> المفضلة</button>
+        <button class="playlist-btn" data-playlist="ترانيم القديسة دميانة">ترانيم القديسة دميانة</button>
+        <button class="playlist-btn" data-playlist="ترانيم عيد الميلاد">ترانيم عيد الميلاد</button>
+        <button class="playlist-btn" data-playlist="ألحان عيد الميلاد">ألحان عيد الميلاد</button>
+        <button class="playlist-btn" data-playlist="ترانيم للسيدة العذراء">ترانيم للسيدة العذراء</button>
+    </nav>
+
+    <!-- زرار تشغيل الكل عشوائي -->
+    <div class="shuffle-container">
+        <div class="shuffle-controls">
+            <button id="shufflePlayBtn" class="shuffle-play-btn">
+                <i class="fa-solid fa-shuffle"></i>
+                <span>تشغيل الكل عشوائي</span>
+                <i class="fa-solid fa-play" id="shufflePlayIcon"></i>
+            </button>
+            
+            <!-- زرار التكرار (Loop) -->
+            <button id="loopBtn" class="loop-btn" title="تكرار التشغيل">
+                <i class="fa-solid fa-repeat"></i>
+            </button>
+        </div>
+        
+        <div class="shuffle-info">
+            <span id="shuffleCount" class="shuffle-count"><strong>0</strong> ترنيمة</span>
+        </div>
+    </div>
+
+    <!-- حاوية الإشعارات (Toast Container) -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- محتوى الترانيم -->
+    <main>
+        <div id="hymnsContainer" class="grid-container"></div>
+    </main>
+
+
+
+    <!-- ============================
+         لوحة تحكم البث المباشر (للمطور فقط - عبر رابط سري)
+         ============================ -->
+    <div id="broadcastPanel" class="broadcast-panel" style="display: none;">
+        <button id="toggleBroadcastBtn" class="broadcast-toggle">
+            <i class="fa-solid fa-broadcast"></i>
+            <span>📡 لوحة البث</span>
+        </button>
+
+        <!-- نافذة تسجيل الدخول -->
+        <div id="broadcastLogin" class="broadcast-login" style="display: none;">
+            <div class="broadcast-login-card">
+                <i class="fa-solid fa-lock"></i>
+                <h3>🔐 دخول المطور</h3>
+                <p>أدخل الرمز السري للوصول إلى لوحة البث</p>
+                <div class="login-input-group">
+                    <input type="password" id="broadcastPassword" placeholder="••••••••" maxlength="10">
+                    <button id="broadcastLoginBtn">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        دخول
+                    </button>
+                </div>
+                <p id="loginError" class="login-error" style="display: none;">❌ رمز خاطئ</p>
+                <div class="login-hint">
+                    <small>🔑 الرمز: <strong>admin123</strong></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- محتوى لوحة البث -->
+        <div id="broadcastContent" class="broadcast-content" style="display: none;">
+            <div class="broadcast-header">
+                <h3><i class="fa-solid fa-satellite-dish"></i> البث المباشر</h3>
+                <p>إرسال رسالة فورية لجميع المستخدمين</p>
+                <span id="activeUsersCount" class="active-users">👥 <strong>0</strong> مستخدم</span>
+                <button id="broadcastLogoutBtn" class="logout-btn">
+                    <i class="fa-solid fa-sign-out-alt"></i>
+                    خروج
+                </button>
+            </div>
+
+            <div class="broadcast-body">
+                <div class="broadcast-form">
+                    <div class="form-group">
+                        <label for="broadcastType"><i class="fa-solid fa-tag"></i> نوع الإشعار</label>
+                        <select id="broadcastType">
+                            <option value="info">📘 معلومات</option>
+                            <option value="success">✅ نجاح</option>
+                            <option value="warning">⚠️ تنبيه</option>
+                            <option value="danger">🚨 عاجل</option>
+                            <option value="celebration">🎉 مناسبة</option>
+                            <option value="prayer">🙏 صلاة</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="broadcastTitle"><i class="fa-solid fa-heading"></i> العنوان</label>
+                        <input type="text" id="broadcastTitle" placeholder="عنوان الإشعار">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="broadcastMessage"><i class="fa-solid fa-comment"></i> الرسالة</label>
+                        <textarea id="broadcastMessage" rows="3" placeholder="نص الرسالة..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="broadcastDuration"><i class="fa-regular fa-clock"></i> المدة (ثانية)</label>
+                        <input type="number" id="broadcastDuration" value="8" min="3" max="30">
+                    </div>
+
+                    <div class="broadcast-actions">
+                        <button id="sendBroadcastBtn" class="send-broadcast-btn">
+                            <i class="fa-solid fa-paper-plane"></i> إرسال للجميع
+                        </button>
+                        <button id="clearBroadcastBtn" class="clear-broadcast-btn">
+                            <i class="fa-solid fa-trash"></i> مسح
+                        </button>
+                    </div>
+                </div>
+
+                <div class="broadcast-history">
+                    <h4>📜 سجل الإشعارات</h4>
+                    <div id="broadcastHistoryList" class="history-list">
+                        <p style="color: var(--text-light); text-align: center; padding: 20px;">لا توجد إشعارات</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================
+         منطقة استقبال الإشعارات (للمستخدمين)
+         ============================ -->
+    <div id="notificationArea" class="notification-area"></div>
+
+
+
+       <!-- ============================
+     الفووتر (Footer) - تصميم جامد
+     ============================ -->
+<footer class="main-footer">
+    <div class="footer-container">
+        <!-- العمود الأول: معلومات الموقع -->
+        <div class="footer-col">
+            <div class="footer-logo">
+                <i class="fa-solid fa-church"></i>
+                <span>Ευλογείτε | سبحوه</span>
+            </div>
+            <p class="footer-desc">
+                مكتبة روحية هادئة تضم أجمل الترانيم والألحان القبطية الأرثوذكسية.🤍
+            </p>
+            <div class="footer-social">
+                <a href="https://wa.me/201022898449" class="social-link" title="واتساب"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://t.me/web_developer1100" class="social-link" title="تيليجرام"><i class="fa-brands fa-telegram"></i></a>
+            </div>
+        </div>
+
+        <!-- العمود الثاني: روابط سريعة -->
+        <div class="footer-col">
+            <h4 class="footer-title"><i class="fa-solid fa-link"></i> روابط سريعة</h4>
+            <ul class="footer-links">
+                <li><a href="#"><i class="fa-solid fa-chevron-left"></i> جميع الترانيم</a></li>
+                <li><a href="#"><i class="fa-solid fa-chevron-left"></i> ترانيم القديسة دميانة</a></li>
+                <li><a href="#"><i class="fa-solid fa-chevron-left"></i> ترانيم عيد الميلاد</a></li>
+                <li><a href="#"><i class="fa-solid fa-chevron-left"></i> ألحان عيد الميلاد</a></li>
+                <li><a href="#"><i class="fa-solid fa-chevron-left"></i> المفضلة</a></li>
+            </ul>
+        </div>
+
+      
+
+        <!-- العمود الرابع: تواصل معنا (من غير موقع وساعة) -->
+        <div class="footer-col">
+            <h4 class="footer-title"><i class="fa-solid fa-envelope"></i> تواصل معنا</h4>
+            <ul class="footer-contact">
+                <li>
+                    <i class="fa-solid fa-phone"></i>
+                    <a href="tel:+201022898449">+20 102 289 8449</a>
+                </li>
+                <li>
+                    <i class="fa-solid fa-envelope"></i>
+                    <a href="mailto:info@eulogite.com">t07896605@gmail.com</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- الجزء السفلي من الفووتر -->
+    <div class="footer-bottom">
+        <div class="footer-bottom-content">
+            <p>
+                <i class="fa-regular fa-copyright"></i>
+                2026 <strong>Ευλογείτε | سبحوه</strong> - جميع الحقوق محفوظة 🤍
+            </p>
+            <p class="footer-dev">
+                <i class="fa-solid fa-code"></i>
+                تصميم وتطوير <strong>Tony Sameh</strong>
+                <span class="footer-divider">|</span>
+                <i class="fa-solid fa-cross"></i>
+                <span>ببركة صلوات القديسة دميانة</span>
+            </p>
+        </div>
+        <button id="backToTop" class="back-to-top" title="العودة للأعلى">
+            <i class="fa-solid fa-arrow-up"></i>
+        </button>
+    </div>
+</footer>
+    <script src="script.js"></script>
+</body>
+</html>
